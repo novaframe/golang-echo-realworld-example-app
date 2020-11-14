@@ -1,11 +1,7 @@
 #
 # 1. Build Container
 #
-FROM golang:1.12.1 AS build
-
-ENV GO111MODULE=on \
-    GOOS=linux \
-    GOARCH=amd64
+FROM golang:1.15.5-alpine3.12 AS build
 
 RUN mkdir -p /src
 
@@ -14,25 +10,23 @@ COPY go.sum go.mod /src/
 
 WORKDIR /src
 
-# Download dependencies
-RUN go mod download
+# Download dependencies & Install alpine-sdk for Build
+RUN apk add --update alpine-sdk && \
+    go mod download
 
 COPY . /src
 
 # Build components.
-# Put built binaries and runtime resources in /app dir ready to be copied over or used.
-RUN go install -installsuffix cgo -ldflags="-w -s" && \
-    mkdir -p /app && \
-    cp -r $GOPATH/bin/golang-echo-realworld-example-app /app/
+RUN go build -o backend
 
 #
 # 2. Runtime Container
 #
-FROM alpine
+FROM alpine:3.12.1
 
-LABEL maintainer="Sina Saeidi <xesina@gmail.com>"
+LABEL maintainer="Hyeokju Lee <frame99@gmail.com>"
 
-ENV TZ=Asia/Tehran \
+ENV TZ=Asia/Seoul \
     PATH="/app:${PATH}"
 
 RUN apk add --update --no-cache \
@@ -44,13 +38,10 @@ RUN apk add --update --no-cache \
     cp --remove-destination /usr/share/zoneinfo/${TZ} /etc/localtime && \
     echo "${TZ}" > /etc/timezone
 
-# See http://stackoverflow.com/questions/34729748/installed-go-binary-not-found-in-path-on-alpine-linux-docker
-RUN mkdir /lib64 && ln -s /lib/libc.musl-x86_64.so.1 /lib64/ld-linux-x86-64.so.2
-
 WORKDIR /app
 
-COPY --from=build /app /app/
+COPY --from=build /src/backend /app/
 
-EXPOSE 8585
+EXPOSE 8080
 
-CMD ["./golang-echo-realworld-example-app"]
+CMD ["./backend"]
