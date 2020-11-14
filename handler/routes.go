@@ -42,6 +42,7 @@ func (h *Handler) Register(v1 *echo.Group) {
 	articles.DELETE("/:slug/favorite", h.Unfavorite)
 	articles.GET("", h.Articles)
 	articles.GET("/:slug", h.GetArticle)
+	articles.GET("/:slug/history", h.GetArticleHistory)
 	articles.GET("/:slug/comments", h.GetComments)
 
 	tags := v1.Group("/tags")

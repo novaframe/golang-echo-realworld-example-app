@@ -6,6 +6,7 @@ import (
 
 type Store interface {
 	GetBySlug(string) (*model.Article, error)
+	GetHistoryBySlug(string) (*model.History, error)
 	GetUserArticleBySlug(userID uint, slug string) (*model.Article, error)
 	CreateArticle(*model.Article) error
 	UpdateArticle(*model.Article, []string) error

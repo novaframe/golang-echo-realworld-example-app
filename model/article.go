@@ -2,6 +2,7 @@ package model
 
 import (
 	"github.com/jinzhu/gorm"
+	"time"
 )
 
 type Article struct {
@@ -15,6 +16,14 @@ type Article struct {
 	Comments    []Comment
 	Favorites   []User `gorm:"many2many:favorites;"`
 	Tags        []Tag  `gorm:"many2many:article_tags;association_autocreate:false"`
+}
+
+type History struct {
+	ID				uint
+	Slug 			string 
+	CreatedAt	time.Time 
+	UpdatedAt time.Time
+	DeletedAt time.Time `json:"value" gorm:"default:null"`
 }
 
 type Comment struct {

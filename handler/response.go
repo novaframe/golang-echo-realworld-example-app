@@ -65,8 +65,20 @@ type articleResponse struct {
 	} `json:"author"`
 }
 
+type articleHistoryResponse struct {
+	Slug				string			`json:"slug"`
+	ID					uint				`json:"id"`
+	CreatedAt		time.Time		`json:"createdAt"`
+	UpdatedAt		time.Time		`json:"updatedAt"`
+	DeletedAt		time.Time		`json:"deletedAt"`
+}
+
 type singleArticleResponse struct {
 	Article *articleResponse `json:"article"`
+}
+
+type singleArticleHistoryResponse struct {
+	History *articleHistoryResponse `json:"ArticleHistory"`
 }
 
 type articleListResponse struct {
@@ -97,6 +109,16 @@ func newArticleResponse(c echo.Context, a *model.Article) *singleArticleResponse
 	ar.Author.Bio = a.Author.Bio
 	ar.Author.Following = a.Author.FollowedBy(userIDFromToken(c))
 	return &singleArticleResponse{ar}
+}
+
+func newArticleHistoryResponse(c echo.Context, h *model.History) *singleArticleHistoryResponse {
+	hr := new(articleHistoryResponse)
+	hr.Slug = h.Slug
+	hr.ID = h.ID
+	hr.CreatedAt = h.CreatedAt
+	hr.UpdatedAt = h.UpdatedAt
+	hr.DeletedAt = h.DeletedAt
+	return &singleArticleHistoryResponse{hr} 
 }
 
 func newArticleListResponse(us user.Store, userID uint, articles []model.Article, count int) *articleListResponse {

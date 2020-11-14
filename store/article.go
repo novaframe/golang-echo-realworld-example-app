@@ -30,6 +30,19 @@ func (as *ArticleStore) GetBySlug(s string) (*model.Article, error) {
 	return &m, err
 }
 
+func (as *ArticleStore) GetHistoryBySlug(s string) (*model.History, error) {
+	var h model.History
+	err := as.db.Raw("SELECT id, slug, created_at, updated_at, deleted_at FROM articles WHERE slug=?", s).Scan(&h).Error
+	if err != nil {
+		if gorm.IsRecordNotFoundError(err) {
+			return nil, nil
+		}
+		return nil, err
+	}
+
+	return &h, err
+}
+
 func (as *ArticleStore) GetUserArticleBySlug(userID uint, slug string) (*model.Article, error) {
 	var m model.Article
 

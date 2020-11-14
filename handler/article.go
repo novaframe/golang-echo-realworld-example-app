@@ -37,6 +37,35 @@ func (h *Handler) GetArticle(c echo.Context) error {
 	return c.JSON(http.StatusOK, newArticleResponse(c, a))
 }
 
+// GetArticleHistory godoc
+// @Summary Get an article History
+// @Description Get an article History. When Created, Deleted, Updated
+// @ID get-article-history
+// @Tags article
+// @Accept  json
+// @Produce  json
+// @Param slug path string true "Slug of the article history to get"
+// @Success 200 {object} singleArticleHistoryResponse
+// @Failure 400 {object} utils.Error
+// @Failure 500 {object} utils.Error
+// @Router /articles/{slug}/history [get]
+func (h *Handler) GetArticleHistory(c echo.Context) error {
+	slug := c.Param("slug")
+	a, err := h.articleStore.GetHistoryBySlug(slug)
+
+	if err != nil {
+		return c.JSON(http.StatusInternalServerError, utils.NewError(err))
+	}
+
+	if a == nil {
+		return c.JSON(http.StatusNotFound, utils.NotFound())
+	}
+
+	return c.JSON(http.StatusOK, newArticleHistoryResponse(c, a))
+}
+
+
+
 // Articles godoc
 // @Summary Get recent articles globally
 // @Description Get most recent articles globally. Use query parameters to filter results. Auth is optional

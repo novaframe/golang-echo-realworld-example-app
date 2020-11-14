@@ -10,7 +10,7 @@ import (
 	"github.com/xesina/golang-echo-realworld-example-app/model"
 )
 
-func New() *gorm.DB {
+func DevDB() *gorm.DB {
 	db, err := gorm.Open("sqlite3", "./realworld.db")
 	if err != nil {
 		fmt.Println("storage err: ", err)

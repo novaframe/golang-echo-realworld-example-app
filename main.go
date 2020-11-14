@@ -33,12 +33,12 @@ func main() {
 
 	v1 := r.Group("/api")
 
-	d := db.New()
+	d := db.DevDB()
 	db.AutoMigrate(d)
 
 	us := store.NewUserStore(d)
 	as := store.NewArticleStore(d)
 	h := handler.NewHandler(us, as)
 	h.Register(v1)
-	r.Logger.Fatal(r.Start("127.0.0.1:8585"))
+	r.Logger.Fatal(r.Start("0.0.0.0:8080"))
 }
