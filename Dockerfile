@@ -28,6 +28,8 @@ ENV TZ=Asia/Seoul \
 # 필요 패키지 설치 및 타임존 설정
 RUN apk add --update --no-cache \
     sqlite \
+    mysql-client \
+    postgresql-client \
     tzdata \
     ca-certificates \
     bash \
@@ -37,6 +39,7 @@ RUN apk add --update --no-cache \
 
 # 빌드 컨테이너에서 빌드완료된  backend 실행 파일 복사
 WORKDIR /app
+COPY --from=build /src/script/wait-for.sh /app/
 COPY --from=build /src/backend /app/
 
 EXPOSE 8080
